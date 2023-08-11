@@ -35,4 +35,4 @@ jobs:
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: 'trivy-results.sarif'
-        github-app-token: ${{ secrets.APP_SECRETS }}
+        token: ${{ secrets.APP_SECRETS }}
