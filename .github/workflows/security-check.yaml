@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - main
+    types:
+      # PR更新時に実行
+      - synchronize
 
 jobs:
   build-and-scan:
