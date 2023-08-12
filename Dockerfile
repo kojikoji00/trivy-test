@@ -20,7 +20,7 @@ RUN go build -o myapp .
 FROM debian:buster-slim
 
 # 脆弱性を持つopensslの古いバージョンをインストール
-RUN apt-get update && apt-get install -y openssl=1.0.2
+RUN apt-get update && apt-get install -y openssl
 
 # ビルドしたバイナリをコピー
 COPY --from=builder /app/myapp /myapp
