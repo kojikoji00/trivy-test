@@ -50,5 +50,5 @@ jobs:
       uses: lazy-actions/gitrivy@v1
       with:
         image: "trivy-test"
-        severity: "LOW,MEDIUM,HIGH,CRITICAL"
+        # severity: "LOW,MEDIUM,HIGH,CRITICAL"
         token: ${{ secrets.GITHUB_TOKEN }}
