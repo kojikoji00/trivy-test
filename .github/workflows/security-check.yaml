@@ -39,7 +39,7 @@ jobs:
 
     # securityには GITHUB_TOKENではアクセスできない
     - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+      uses: github/codeql-action/upload-sarif@v1
       with:
         sarif_file: 'trivy-results.sarif'
         # token: ${{ secrets.APP_SECRETS }}
