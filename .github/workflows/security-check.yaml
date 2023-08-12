@@ -43,12 +43,12 @@ jobs:
       with:
         sarif_file: 'trivy-results.sarif'
         # token: ${{ secrets.APP_SECRETS }}
-        token: ${{ secrets.GITHUB_TOKEN }}
+        # token: ${{ secrets.GITHUB_TOKEN }}
 
     # ISSUEへの書き込み
     - name: Run Trivy vulnerability scanner and create GitHub Issue
       uses: lazy-actions/gitrivy@v1
       with:
         image: "trivy-test"
-        severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+        severity: "LOW,MEDIUM,HIGH,CRITICAL"
         token: ${{ secrets.GITHUB_TOKEN }}
