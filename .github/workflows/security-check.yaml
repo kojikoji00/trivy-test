@@ -47,7 +47,7 @@ jobs:
 
     # ISSUEへの書き込み
     - name: Run Trivy vulnerability scanner and create GitHub Issue
-      uses: lazy-actions/gitrivy@v1
+      uses: lazy-actions/gitrivy@v3
       with:
         image: 'trivy-test'
         severity: 'HIGH,CRITICAL'
