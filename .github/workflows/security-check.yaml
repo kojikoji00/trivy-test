@@ -35,7 +35,7 @@ jobs:
         output: 'trivy-results.sarif'
         ignore-unfixed: true
         vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+        # severity: 'CRITICAL,HIGH'
 
     # securityには GITHUB_TOKENではアクセスできない
     - name: Upload Trivy scan results to GitHub Security tab
