@@ -20,7 +20,7 @@ RUN go build -o myapp .
 FROM debian:stretch
 
 # 脆弱性を持つopensslの古いバージョンをインストール
-RUN apt-get update && apt-get install -y curl=7.52.1-5
+RUN apt-get update && apt-get install -y curl
 
 # ビルドしたバイナリをコピー
 COPY --from=builder /app/myapp /myapp
