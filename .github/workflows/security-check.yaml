@@ -43,3 +43,4 @@ jobs:
       with:
         sarif_file: 'trivy-results.sarif'
         # token: ${{ secrets.APP_SECRETS }}
+        token: ${{ secrets.GITHUB_TOKEN }}
