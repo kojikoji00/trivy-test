@@ -17,7 +17,7 @@ COPY . .
 RUN go build -o myapp .
 
 # 実行ステージ
-FROM debian:buster-slim
+FROM debian:stretch
 
 # 脆弱性を持つopensslの古いバージョンをインストール
 RUN apt-get update && apt-get install -y curl=7.52.1-5
