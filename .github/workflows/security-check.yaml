@@ -27,25 +27,15 @@ jobs:
       run: |
         docker build -t trivy-test .
 
-    - name: Install Trivy
-      run: |
-        wget https://github.com/aquasecurity/trivy/releases/download/v0.44.1/trivy_0.44.1_Linux-64bit.tar.gz
-        tar zxvf trivy_0.44.1_Linux-64bit.tar.gz
-        sudo mv trivy /usr/local/bin/
-
-    # - name: Run Trivy vulnerability scanner
-    #   uses: aquasecurity/trivy-action@master
-    #   with:
-    #     image-ref: 'trivy-test'
-    #     format: 'sarif'
-    #     output: 'trivy-results.sarif'
-    #     ignore-unfixed: true
-    #     vuln-type: 'os,library'
-    #     severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
-
     - name: Run Trivy vulnerability scanner
-      run: |
-        trivy image --format template --template "@contrib/sarif.tpl" -o trivy-results.sarif trivy-test
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'trivy-test'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        ignore-unfixed: true
+        vuln-type: 'os,library'
+        severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
 
     # securityには GITHUB_TOKENではアクセスできない
     - name: Upload Trivy scan results to GitHub Security tab
