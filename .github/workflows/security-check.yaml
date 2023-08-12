@@ -35,7 +35,7 @@ jobs:
         output: 'trivy-results.sarif'
         ignore-unfixed: true
         vuln-type: 'os,library'
-        # severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+        severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
 
     # securityには GITHUB_TOKENではアクセスできない
     - name: Upload Trivy scan results to GitHub Security tab
@@ -47,7 +47,7 @@ jobs:
 
     # ISSUEへの書き込み
     - name: Run Trivy vulnerability scanner and create GitHub Issue
-      uses: lazy-actions/gitrivy@v3
+      uses: lazy-actions/gitrivy@main
       with:
         image: 'trivy-test'
         severity: 'HIGH,CRITICAL'
