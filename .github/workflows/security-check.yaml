@@ -38,9 +38,15 @@ jobs:
         # exit-code: '1'
         vuln-type: 'os,library'
         severity: 'LOW,MEDIUM,HIGH,CRITICAL'
-    - name: Display logs
-      run: |
-        cat trivy-results.sarif
+    # - name: Display logs
+    #   run: |
+    #     cat trivy-results.sarif
+
+    - name: Archive Trivy scan results
+      uses: actions/upload-artifact@v2
+      with:
+        name: trivy-results
+        path: trivy-results.sarif
 
     # securityには GITHUB_TOKENではアクセスできない
     - name: Upload Trivy scan results to GitHub Security tab
