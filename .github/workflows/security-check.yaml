@@ -28,7 +28,7 @@ jobs:
         docker build -t trivy-test .
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@0.44.0
+      uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'trivy-test:latest'
         # format: 'sarif'
@@ -36,7 +36,7 @@ jobs:
         # output: 'trivy-results.sarif'
         # ignore-unfixed: true
         # exit-code: '1'
-        # vuln-type: 'os,library'
+        vuln-type: 'os,library'
         severity: 'MEDIUM,HIGH,CRITICAL'
 
     # securityには GITHUB_TOKENではアクセスできない
