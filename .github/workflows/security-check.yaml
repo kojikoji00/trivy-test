@@ -43,7 +43,7 @@ jobs:
         sarif_file: 'trivy-results.sarif'
 
     - name: Create GitHub Issue from Trivy scan results
-      uses: knqyf263/trivy-issue-action@master
+      uses: knqyf263/trivy-issue-action@main
       with:
         image: 'trivy-test:${{ github.sha }}'
         severity: 'HIGH,CRITICAL'
