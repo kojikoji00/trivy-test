@@ -31,21 +31,21 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'trivy-test:latest'
-        # format: 'sarif'
-        format: 'table'
-        # output: 'trivy-results.sarif'
+        format: 'sarif'
+        # format: 'table'
+        output: 'trivy-results.sarif'
         # ignore-unfixed: true
         # exit-code: '1'
         vuln-type: 'os,library'
         severity: 'MEDIUM,HIGH,CRITICAL'
 
     # securityには GITHUB_TOKENではアクセスできない
-    # - name: Upload Trivy scan results to GitHub Security tab
-    #   uses: github/codeql-action/upload-sarif@v2
-    #   with:
-    #     sarif_file: 'trivy-results.sarif'
-    #     # token: ${{ secrets.APP_SECRETS }}
-    #     # token: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+        # token: ${{ secrets.APP_SECRETS }}
+        # token: ${{ secrets.GITHUB_TOKEN }}
 
     # ISSUEへの書き込み
     # - name: Run Trivy vulnerability scanner and create GitHub Issue
