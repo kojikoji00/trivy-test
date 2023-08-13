@@ -37,7 +37,7 @@ jobs:
         # ignore-unfixed: true
         # exit-code: '1'
         vuln-type: 'os,library'
-        severity: 'MEDIUM,HIGH,CRITICAL'
+        severity: 'LOW,MEDIUM,HIGH,CRITICAL'
 
     # securityには GITHUB_TOKENではアクセスできない
     - name: Upload Trivy scan results to GitHub Security tab
