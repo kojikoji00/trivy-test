@@ -47,11 +47,11 @@ jobs:
     #     # token: ${{ secrets.APP_SECRETS }}
     #     # token: ${{ secrets.GITHUB_TOKEN }}
 
-    # # ISSUEへの書き込み
-    # - name: Run Trivy vulnerability scanner and create GitHub Issue
-    #   uses: lazy-actions/gitrivy@main
-    #   with:
-    #     image: 'trivy-test'
-    #     # severity: 'HIGH,CRITICAL'
-    #     vuln_type: 'os,library'
-    #     token: ${{ secrets.GITHUB_TOKEN }}
+    # ISSUEへの書き込み
+    - name: Run Trivy vulnerability scanner and create GitHub Issue
+      uses: lazy-actions/gitrivy@main
+      with:
+        image: 'trivy-test'
+        # severity: 'HIGH,CRITICAL'
+        vuln_type: 'os,library'
+        token: ${{ secrets.GITHUB_TOKEN }}
