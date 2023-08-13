@@ -33,25 +33,25 @@ jobs:
         image-ref: 'trivy-test:latest'
         # format: 'sarif'
         format: 'table'
-        # output: 'trivy-results.sarif'
-        ignore-unfixed: true
+        output: 'trivy-results.sarif'
+        # ignore-unfixed: true
         exot-code: '1'
         vuln-type: 'os,library'
         severity: 'MEDIUM,HIGH,CRITICAL'
 
-    # # securityには GITHUB_TOKENではアクセスできない
-    # - name: Upload Trivy scan results to GitHub Security tab
-    #   uses: github/codeql-action/upload-sarif@v2
-    #   with:
-    #     sarif_file: 'trivy-results.sarif'
+    # securityには GITHUB_TOKENではアクセスできない
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
     #     # token: ${{ secrets.APP_SECRETS }}
     #     # token: ${{ secrets.GITHUB_TOKEN }}
 
     # ISSUEへの書き込み
-    - name: Run Trivy vulnerability scanner and create GitHub Issue
-      uses: lazy-actions/gitrivy@main
-      with:
-        image: 'trivy-test:latest'
-        # severity: 'HIGH,CRITICAL'
-        vuln_type: 'os,library'
-        token: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Run Trivy vulnerability scanner and create GitHub Issue
+    #   uses: lazy-actions/gitrivy@main
+    #   with:
+    #     image: 'trivy-test:latest'
+    #     # severity: 'HIGH,CRITICAL'
+    #     vuln_type: 'os,library'
+    #     token: ${{ secrets.GITHUB_TOKEN }}
