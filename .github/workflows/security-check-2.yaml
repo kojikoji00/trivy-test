@@ -9,7 +9,7 @@ on:
       - synchronize
 
 env:
-  TRIVY_VERSION: latest
+  TRIVY_VERSION: 0.44.1
 
 jobs:
   build-and-scan:
