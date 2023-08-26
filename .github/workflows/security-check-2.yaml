@@ -39,7 +39,13 @@ jobs:
 
     - name: Run Trivy vulnerability scanner on Terraform config
       run: |
-        trivy config --severity HIGH,CRITICAL --exit-code 1 . > trivy-result.txt
+        trivy config --debug --severity HIGH,CRITICAL --exit-code 1 . > trivy-result.txt
+
+    - name: Upload Trivy scan results
+      uses: actions/upload-artifact@v2
+      with:
+        name: trivy-result
+        path: trivy-result.txt
 
     - name: Comment PR with Trivy scan results
       uses: actions/github-script@v3
