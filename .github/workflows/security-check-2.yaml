@@ -1,12 +1,12 @@
-name: CI/CD with Vulnerability Scanning2
+name: CI/CD with Vulnerability Scanning
 
+# トリガー設定
 on:
   pull_request:
     branches:
       - main
     types:
-      # PR更新時に実行
-      - synchronize
+      - synchronize # PRが更新されたときに実行
 
 env:
   TRIVY_VERSION: 0.44.1
@@ -21,7 +21,6 @@ jobs:
       issues: write
 
     steps:
-
     - name: Generate token
       id: generate_token
       uses: tibdex/github-app-token@v1
@@ -39,7 +38,6 @@ jobs:
       run: |
         docker build -t trivy-test:${{ github.sha }} .
 
-
     - name: Install Trivy
       run: |
         sudo apt-get install rpm
@@ -48,23 +46,19 @@ jobs:
 
     - name: Run Trivy vulnerability scanner on Terraform config
       run: |
-        trivy config --debug --severity HIGH,CRITICAL . > trivy-result.txt
+        trivy config --severity HIGH,CRITICAL . > trivy-config-scan-result.txt
+        trivy image --severity HIGH,CRITICAL trivy-test:${{ github.sha }} > trivy-image-scan-result.txt
 
-    - name: Upload Trivy scan results
-      uses: actions/upload-artifact@v2
-      with:
-        name: trivy-result
-        path: trivy-result.txt
-
-    - name: Comment PR with Trivy scan results
+    # PRにTrivyコンフィグスキャン結果をコメント
+    - name: Comment PR with Trivy config scan results
       uses: actions/github-script@v3
       with:
         github-token: ${{ steps.generate_token.outputs.token }}
         script: |
           const fs = require('fs');
-          const output = fs.readFileSync('trivy-result.txt', 'utf8');
+          const output = fs.readFileSync('trivy-config-scan-result.txt', 'utf8');
           const issue_number = context.issue.number;
-          const message = `### Trivy Vulnerability Scan Results:\n\`\`\`${output}\`\`\``;
+          const message = `### Trivy Config Vulnerability Scan Results:\n\`\`\`${output}\`\`\``;
           github.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
@@ -72,3 +66,19 @@ jobs:
             body: message
           });
 
+    # PRにTrivyイメージスキャン結果をコメント
+    - name: Comment PR with Trivy image scan results
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ steps.generate_token.outputs.token }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('trivy-image-scan-result.txt', 'utf8');
+          const issue_number = context.issue.number;
+          const message = `### Trivy Image Vulnerability Scan Results:\n\`\`\`${output}\`\`\``;
+          github.issues.createComment({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
