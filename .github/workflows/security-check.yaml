@@ -10,10 +10,6 @@ on:
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
-    # permissions:
-    #   contents: read
-    #   security-events: write
-    #   actions: read
 
     steps:
     - name: Generate token
