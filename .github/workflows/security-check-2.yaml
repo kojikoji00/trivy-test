@@ -58,7 +58,7 @@ jobs:
           const fs = require('fs');
           const output = fs.readFileSync('trivy-config-scan-result.txt', 'utf8');
           const issue_number = context.issue.number;
-          const message = `### Trivy Config Vulnerability Scan Results:\n\`\`\`${output}\`\`\``;
+          const message = `## Trivy Config Vulnerability Scan Results \n\n\`\`\`\n${output}\n\`\`\``;
           github.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
@@ -75,7 +75,7 @@ jobs:
           const fs = require('fs');
           const output = fs.readFileSync('trivy-image-scan-result.txt', 'utf8');
           const issue_number = context.issue.number;
-          const message = `### Trivy Image Vulnerability Scan Results:\n\`\`\`${output}\`\`\``;
+          const message = `## Trivy Image Vulnerability Scan Results \n\n\`\`\`\n${output}\n\`\`\``;
           github.issues.createComment({
             issue_number: issue_number,
             owner: context.repo.owner,
