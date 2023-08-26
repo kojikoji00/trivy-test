@@ -59,11 +59,28 @@ jobs:
             body: message
           });
 
-    # ISSUEに脆弱性のスキャン結果を追加
     - name: Create GitHub Issue from Trivy scan results
-      uses: knqyf263/trivy-issue-action@main
+      uses: actions/github-script@v3
       with:
-        severity: 'HIGH,CRITICAL'
-        label: 'vulnerability'
-      env:
-        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+        github-token: ${{ steps.generate_token.outputs.token }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('trivy-results.txt', 'utf8');
+          const title = "Trivy Vulnerability Scan Results";
+          const message = ` **Trivy Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
+          github.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: message,
+            labels: ['vulnerability']
+          });
+
+    # # ISSUEに脆弱性のスキャン結果を追加（OSS）
+    # - name: Create GitHub Issue from Trivy scan results
+    #   uses: knqyf263/trivy-issue-action@main
+    #   with:
+    #     severity: 'HIGH,CRITICAL'
+    #     label: 'vulnerability'
+    #   env:
+    #     GH_TOKEN: ${{ steps.generate_token.outputs.token }}
