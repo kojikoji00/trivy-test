@@ -1,4 +1,4 @@
-name: CI/CD with Vulnerability Scanning
+name: CI/CD with Vulnerability Scanning2
 
 on:
   pull_request:
@@ -9,7 +9,7 @@ on:
       - synchronize
 
 env:
-  TRIVY_VERSION: 0.44.1
+  TRIVY_VERSION: latest
 
 jobs:
   build-and-scan:

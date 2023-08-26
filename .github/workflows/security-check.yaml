@@ -1,4 +1,4 @@
-name: CI/CD with Vulnerability Scanning2
+name: CI/CD with Vulnerability Scanning
 
 on:
   pull_request:
