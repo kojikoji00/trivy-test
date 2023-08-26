@@ -28,13 +28,13 @@ jobs:
         docker build -t trivy-test:${{ github.sha }} .
 
     - name: Run Trivy vulnerability scanner
-      uses: aquasecurity/trivy-action@v0.0.20 
+      uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'trivy-test:${{ github.sha }}'
-        format: 'json'
+        format: 'sarif'
         # output: 'trivy-results.json'
         vuln-type: 'os,library'
-        severity: 'LOW,MEDIUM,HIGH,CRITICAL'
+        severity: 'HIGH,CRITICAL'
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy scan results to GitHub Security tab
