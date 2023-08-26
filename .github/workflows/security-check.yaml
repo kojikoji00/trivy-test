@@ -33,14 +33,26 @@ jobs:
       run: |
         docker build -t trivy-test:${{ github.sha }} .
 
-    - name: Run Trivy vulnerability scanner in table format
+    # イメージの脆弱性スキャン
+    - name: Run Trivy vulnerability scanner on image
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'trivy-test:${{ github.sha }}'
         format: 'table'
         vuln-type: 'os,library'
         severity: 'HIGH,CRITICAL'
-        output: 'trivy-results.txt'
+        output: 'trivy-image-results.txt'
+
+    # コンフィグファイルの脆弱性スキャン
+    - name: Run Trivy vulnerability scanner on config
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        input: '.'
+        format: 'table'
+        vuln-type: 'os,library'
+        severity: 'HIGH,CRITICAL'
+        output: 'trivy-config-results.txt'
 
     # PRのコメント部分に脆弱性のスキャン結果を追加
     - name: Comment PR with Trivy scan results
@@ -59,21 +71,57 @@ jobs:
             body: message
           });
 
-    - name: Create GitHub Issue from Trivy scan results
+    # PRのコメント部分にコンフィグの脆弱性スキャン結果を追加
+    - name: Comment PR with Trivy config scan results
       uses: actions/github-script@v3
       with:
         github-token: ${{ steps.generate_token.outputs.token }}
         script: |
           const fs = require('fs');
-          const output = fs.readFileSync('trivy-results.txt', 'utf8');
-          const title = "Trivy Vulnerability Scan Results";
-          const message = ` **Trivy Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
+          const output = fs.readFileSync('trivy-config-results.txt', 'utf8');
+          const issue_number = context.issue.number;
+          const message = ` **Trivy Config Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
+          github.issues.createComment({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
+
+    # イメージの脆弱性スキャン結果をGitHub Issueに追加
+    - name: Create GitHub Issue from Trivy image scan results
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ steps.generate_token.outputs.token }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('trivy-image-results.txt', 'utf8');
+          const title = "Trivy Image Vulnerability Scan Results";
+          const message = ` **Trivy Image Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
           github.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
             title: title,
             body: message,
-            labels: ['vulnerability']
+            labels: ['vulnerability', 'image']
+          });
+
+    # コンフィグの脆弱性スキャン結果をGitHub Issueに追加
+    - name: Create GitHub Issue from Trivy config scan results
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ steps.generate_token.outputs.token }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('trivy-config-results.txt', 'utf8');
+          const title = "Trivy Config Vulnerability Scan Results";
+          const message = ` **Trivy Config Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
+          github.issues.create({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            title: title,
+            body: message,
+            labels: ['vulnerability', 'config']
           });
 
     # # ISSUEに脆弱性のスキャン結果を追加（OSS）
@@ -82,5 +130,8 @@ jobs:
     #   with:
     #     severity: 'HIGH,CRITICAL'
     #     label: 'vulnerability'
+    #     skip-dirs: 'xxxxx'
+    #     assignees: 'xxxxx'
+    #     project-id: 'xxxxx'
     #   env:
     #     GH_TOKEN: ${{ steps.generate_token.outputs.token }}
