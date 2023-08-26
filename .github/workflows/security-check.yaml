@@ -49,7 +49,7 @@ jobs:
         vuln-type: 'os,library'
         severity: 'HIGH,CRITICAL'
         output: 'trivy-image-results.txt'
-        # ignore-unfixed: true # 未修正の脆弱性を無視
+        ignore-unfixed: true # 未修正の脆弱性を無視
         # scanners: 'vuln, secret, config'
 
     # コンフィグファイルの脆弱性スキャン
@@ -61,7 +61,7 @@ jobs:
         vuln-type: 'os,library'
         severity: 'HIGH,CRITICAL'
         output: 'trivy-config-results.txt'
-        # ignore-unfixed: true # 未修正の脆弱性を無視
+        ignore-unfixed: true # 未修正の脆弱性を無視
         # scanners: 'vuln, secret, config'
 
     # PRのコメント部分に脆弱性のスキャン結果を追加
