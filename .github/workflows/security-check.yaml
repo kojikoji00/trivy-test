@@ -47,7 +47,7 @@ jobs:
     - name: Run Trivy vulnerability scanner on config
       uses: aquasecurity/trivy-action@master
       with:
-        scan-type: 'fs'
+        scan-type: 'config'
         # input: '.'
         format: 'table'
         vuln-type: 'os,library'
