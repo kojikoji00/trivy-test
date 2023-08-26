@@ -61,7 +61,7 @@ jobs:
         github-token: ${{ steps.generate_token.outputs.token }}
         script: |
           const fs = require('fs');
-          const output = fs.readFileSync('trivy-results.txt', 'utf8');
+          const output = fs.readFileSync('trivy-image-results.txt', 'utf8');
           const issue_number = context.issue.number;
           const message = ` **Trivy Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
           github.issues.createComment({
