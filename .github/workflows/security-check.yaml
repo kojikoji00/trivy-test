@@ -1,13 +1,20 @@
 name: CI/CD with Vulnerability Scanning
 
 on:
-  push:
+  pull_request:
     branches:
       - main
+    types:
+      # PR更新時に実行
+      - synchronize
 
 jobs:
   build-and-scan:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
 
     steps:
     - name: Checkout code
@@ -18,21 +25,37 @@ jobs:
 
     - name: Build an image from Dockerfile
       run: |
-        docker build -t trivy-test .
+        docker build -t trivy-test:${{ github.sha }} .
 
     - name: Run Trivy vulnerability scanner
       uses: aquasecurity/trivy-action@master
       with:
-        image-ref: 'trivy-test'
+        image-ref: 'trivy-test:${{ github.sha }}'
         format: 'sarif'
-        output: 'trivy-results.sarif'
-        ignore-unfixed: true
+        # output: 'trivy-results.json'
         vuln-type: 'os,library'
-        severity: 'CRITICAL,HIGH'
+        severity: 'HIGH,CRITICAL'
+        output: 'trivy-results.sarif'
 
-    # securityには GITHUB_TOKENではアクセスできない
     - name: Upload Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: 'trivy-results.sarif'
-        # token: ${{ secrets.APP_SECRETS }}
+
+    # - name: Create GitHub Issue from Trivy scan results
+    #   uses: knqyf263/trivy-issue-action@main
+    #   with:
+    #     severity: 'HIGH,CRITICAL'
+    #     label: 'vulnerability'
+    #   env:
+    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+    # ISSUEへの書き込み
+    # - name: Run Trivy vulnerability scanner and create GitHub Issue
+    #   uses: lazy-actions/gitrivy@main
+    #   with:
+    #     image: 'trivy-test:latest'
+    #     # severity: 'HIGH,CRITICAL'
+    #     vuln_type: 'os,library'
+    #     token: ${{ secrets.GITHUB_TOKEN }}
