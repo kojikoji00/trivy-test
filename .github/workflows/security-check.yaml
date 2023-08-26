@@ -48,7 +48,7 @@ jobs:
       uses: aquasecurity/trivy-action@master
       with:
         scan-type: 'fs'
-        input: '.'
+        # input: '.'
         format: 'table'
         vuln-type: 'os,library'
         severity: 'HIGH,CRITICAL'
