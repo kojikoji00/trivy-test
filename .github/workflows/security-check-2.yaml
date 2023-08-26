@@ -29,11 +29,6 @@ jobs:
         app_id: ${{ secrets.APP_ID }}
         private_key: ${{ secrets.PRIVATE_KEY }}
 
-    - name: use token
-      run: echo "$GITHUB_TOKEN"
-      env:
-        GITHUB_TOKEN: ${{ steps.generate_token.outputs.token }}
-
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -64,7 +59,7 @@ jobs:
     - name: Comment PR with Trivy scan results
       uses: actions/github-script@v3
       with:
-        github-token: ${{ env.GITHUB_TOKEN }}
+        github-token: ${{ steps.generate_token.outputs.token }}
         script: |
           const fs = require('fs');
           const output = fs.readFileSync('trivy-result.txt', 'utf8');
