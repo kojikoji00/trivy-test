@@ -1,0 +1,59 @@
+name: CI/CD with Vulnerability Scanning
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      # PR更新時に実行
+      - synchronize
+
+env:
+  TRIVY_VERSION: 0.44.1
+
+jobs:
+  build-and-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+      actions: read
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v1
+
+    - name: Build an image from Dockerfile
+      run: |
+        docker build -t trivy-test:${{ github.sha }} .
+
+
+    - name: Install Trivy
+      run: |
+        sudo apt-get install rpm
+        wget https://github.com/aquasecurity/trivy/releases/download/v${{ env.TRIVY_VERSION }}/trivy_${{ env.TRIVY_VERSION }}_Linux-64bit.deb
+        sudo dpkg -i trivy_${{ env.TRIVY_VERSION }}_Linux-64bit.deb
+
+    - name: Run Trivy vulnerability scanner on Terraform config
+      run: |
+        trivy config --severity HIGH,CRITICAL --exit-code 1 . > trivy-result.txt
+
+    - name: Comment PR with Trivy scan results
+      uses: actions/github-script@v3
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('trivy-result.txt', 'utf8');
+          const issue_number = context.issue.number;
+          const message = `### Trivy Vulnerability Scan Results:\n\`\`\`${output}\`\`\``;
+          github.issues.createComment({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
+
