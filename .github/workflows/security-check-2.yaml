@@ -1,4 +1,4 @@
-name: CI/CD with Vulnerability Scanning
+name: Vulnerability Report in PR Comments
 
 # トリガー設定
 on:

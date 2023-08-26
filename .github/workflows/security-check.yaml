@@ -1,11 +1,10 @@
-name: CI/CD with Vulnerability Scanning
+name: Vulnerability Report in Security Tab and PR
 
 on:
   pull_request:
     branches:
       - main
     types:
-      # PR更新時に実行
       - synchronize
 
 jobs:
@@ -17,6 +16,13 @@ jobs:
       actions: read
 
     steps:
+    - name: Generate token
+      id: generate_token
+      uses: tibdex/github-app-token@v1
+      with:
+        app_id: ${{ secrets.APP_ID }}
+        private_key: ${{ secrets.PRIVATE_KEY }}
+
     - name: Checkout code
       uses: actions/checkout@v2
 
@@ -27,35 +33,37 @@ jobs:
       run: |
         docker build -t trivy-test:${{ github.sha }} .
 
-    - name: Run Trivy vulnerability scanner
+    - name: Run Trivy vulnerability scanner in table format
       uses: aquasecurity/trivy-action@master
       with:
         image-ref: 'trivy-test:${{ github.sha }}'
-        format: 'sarif'
-        # output: 'trivy-results.json'
+        format: 'table'
         vuln-type: 'os,library'
         severity: 'HIGH,CRITICAL'
-        output: 'trivy-results.sarif'
+        output: 'trivy-results.txt'
 
-    - name: Upload Trivy scan results to GitHub Security tab
-      uses: github/codeql-action/upload-sarif@v2
+    # PRのコメント部分に脆弱性のスキャン結果を追加
+    - name: Comment PR with Trivy scan results
+      uses: actions/github-script@v3
       with:
-        sarif_file: 'trivy-results.sarif'
+        github-token: ${{ steps.generate_token.outputs.token }}
+        script: |
+          const fs = require('fs');
+          const output = fs.readFileSync('trivy-results.txt', 'utf8');
+          const issue_number = context.issue.number;
+          const message = ` **Trivy Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
+          github.issues.createComment({
+            issue_number: issue_number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: message
+          });
 
-    # - name: Create GitHub Issue from Trivy scan results
-    #   uses: knqyf263/trivy-issue-action@main
-    #   with:
-    #     severity: 'HIGH,CRITICAL'
-    #     label: 'vulnerability'
-    #   env:
-    #     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-    # ISSUEへの書き込み
-    # - name: Run Trivy vulnerability scanner and create GitHub Issue
-    #   uses: lazy-actions/gitrivy@main
-    #   with:
-    #     image: 'trivy-test:latest'
-    #     # severity: 'HIGH,CRITICAL'
-    #     vuln_type: 'os,library'
-    #     token: ${{ secrets.GITHUB_TOKEN }}
+    # ISSUEに脆弱性のスキャン結果を追加
+    - name: Create GitHub Issue from Trivy scan results
+      uses: knqyf263/trivy-issue-action@main
+      with:
+        severity: 'HIGH,CRITICAL'
+        label: 'vulnerability'
+      env:
+        GH_TOKEN: ${{ steps.generate_token.outputs.token }}
