@@ -105,7 +105,7 @@ jobs:
           const fs = require('fs');
           const output = fs.readFileSync('trivy-image-results.txt', 'utf8');
           const title = "Trivy Image Vulnerability Scan Results";
-          const message = ` **Trivy Image Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
+          const message = `## Trivy Image Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
           github.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -123,7 +123,7 @@ jobs:
           const fs = require('fs');
           const output = fs.readFileSync('trivy-config-results.txt', 'utf8');
           const title = "Trivy Config Vulnerability Scan Results";
-          const message = ` **Trivy Config Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
+          const message = `## Trivy Config Vulnerability Scan Results** \n\n\`\`\`\n${output}\n\`\`\`\nPlease review the vulnerabilities and take necessary actions.`;
           github.issues.create({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -143,3 +143,17 @@ jobs:
     #     project-id: 'xxxxx'
     #   env:
     #     GH_TOKEN: ${{ steps.generate_token.outputs.token }}
+
+    - name: Run Trivy vulnerability scanner with SARIF output
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'config'
+        format: 'sarif'
+        vuln-type: 'os,library'
+        severity: 'HIGH,CRITICAL'
+        output: 'trivy-config-results.sarif'
+
+    - name: Upload SARIF Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-config-results.sarif'
