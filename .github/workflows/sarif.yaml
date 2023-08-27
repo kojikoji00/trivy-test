@@ -47,6 +47,17 @@ jobs:
         severity: 'HIGH,CRITICAL'
         output: 'trivy-image-results.sarif'
 
+    - name: Display contents of trivy-image-results.sarif
+      run: cat trivy-image-results.sarif
+
+    - name: Upload SARIF Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-config-results.sarif'
+
+    - name: Display contents of trivy-image-results.sarif
+      run: cat trivy-config-results.sarif
+
     - name: Upload SARIF Trivy scan results to GitHub Security tab
       uses: github/codeql-action/upload-sarif@v2
       with:
