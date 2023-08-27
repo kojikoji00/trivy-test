@@ -1,5 +1,4 @@
-name: Sarif
-
+name: Vulnerability Report in PR Comments and Issues
 on:
   pull_request:
     branches:
