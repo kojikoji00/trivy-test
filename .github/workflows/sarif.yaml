@@ -41,7 +41,7 @@ jobs:
     - name: Run Trivy vulnerability scanner with SARIF output
       uses: aquasecurity/trivy-action@master
       with:
-        scan-type: 'image'
+        image-ref: 'trivy-test:${{ github.sha }}'
         format: 'sarif'
         vuln-type: 'os,library'
         severity: 'HIGH,CRITICAL'
