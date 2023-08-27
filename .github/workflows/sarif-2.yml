@@ -1,4 +1,4 @@
-name: Vulnerability Report in PR Comments and Issues
+name: Sarif
 
 on:
   pull_request:
@@ -54,6 +54,7 @@ jobs:
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: 'trivy-config-results.sarif'
+        category: 'Trivy Config Scan'
 
     - name: Display contents of trivy-image-results.sarif
       run: cat trivy-config-results.sarif
@@ -62,4 +63,5 @@ jobs:
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: 'trivy-image-results.sarif'
+        category: 'Trivy Image Scan'
 
